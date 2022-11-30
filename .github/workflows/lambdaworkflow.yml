@@ -5,8 +5,6 @@ name: Building and Deploying Lambda function
 on:
   push:
     branches: [main]
-  # pull_request:
-  #   branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -17,27 +15,26 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: true
       matrix:
-        node-version: [12.x]
+        node-version: [16.x]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Creating a zip file for lambda
-        run: |
-             pwd
-             ls -al
-             zip -r index.zip ./
-             echo "after zipping index folder"
-             ls -al
+      - name: Creating zip of lambda index file
+        run: zip -r serverless.zip . -x ".git/*" ".github/*"
+
       - name: Configuring AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Copying artifact to S3
-        run: |
-           aws s3 cp ./index.zip s3://deploy.serverless.a9/
+
+      # - name: Copying artifact to S3
+      #   run: |
+      #      aws s3 cp ./index.zip s3://deploy.serverless.a9/
+
       - name: Lambda Update
         run: |
-          aws lambda update-function-code --function-name emailVerify --s3-bucket deploy.serverless.a9 --s3-key index.zip
+          aws lambda update-function-code --function-name emailVerify --zip-file fileb://${{ github.workspace }}/serverless.zip
