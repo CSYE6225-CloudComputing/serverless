@@ -27,9 +27,9 @@ exports.handler = async function (event) {
             <p><a href="https://prod.prasannanimbalkar.me/v1/verifyUserEmail?token=${token}&email=${emailAddress}"> 
              Click here </a> to verify your email
               </br>
-              <b>Link will be valid only for 5 minutes!</b>
+              <p>Link will be valid only for 5 minutes!</p>
               </br>
-              you can use the following link:
+              <p>you can use the following link:</p>
             </p>
             <p>
               <a href="https://prod.prasannanimbalkar.me/v1/verifyUserEmail?token=${token}&email=${emailAddress}"> 
